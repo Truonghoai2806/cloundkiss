@@ -4,9 +4,9 @@ const cors = require('cors');
 const authenticate = require("./middleware/authenticate"); // Middleware xác thực token
 const configViewEngine = require('./config/viewEngine');
 const connection = require('./config/database');
-const Routes = require('./routes/api');
 const categoryRoutes = require('./routes/category');
 const productRoutes = require('./routes/product');
+const cartRoutes = require('./routes/cart');
 // const { getHomepage } = require('./controllers/homeController');
 
 const app = express();
@@ -17,6 +17,7 @@ app.use(cors({
     origin: "http://localhost:3000",
     methods: "GET,POST,PUT,DELETE",
     allowedHeaders: "Content-Type, Authorization",
+    credentials: true // Cho phép gửi cookie
 }));
 
 // Middleware cấu hình
@@ -36,9 +37,10 @@ configViewEngine(app);
 
 // Khai báo route
 // app.use('/', getHomepage);
-app.use('/api', Routes);
 app.use('/category', categoryRoutes); 
 app.use('/product', productRoutes);
+app.use('/cart', cartRoutes);
+
 // Khởi động server
 (async () => {
     try {

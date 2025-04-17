@@ -26,8 +26,8 @@ const getProduct = async (req, res) => {
 
 const createProduct = async (req, res) => {
     try {
-        const { name, price, description, image, category, sizes, colors, gender, discount, tags } = req.body;
-        
+        const { name, price, description, image, category, sizes, gender, discount, tags } = req.body;
+
         if (!name || !price || !category) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
@@ -39,7 +39,6 @@ const createProduct = async (req, res) => {
             image,
             category,
             sizes: Array.isArray(sizes) ? sizes : [],
-            colors: Array.isArray(colors) ? colors : [],
             gender,
             discount,
             tags: Array.isArray(tags) ? tags : []
@@ -57,8 +56,8 @@ const createProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
     try {
-        const { name, price, description, image, category, sizes, colors, gender, discount, tags } = req.body;
-        
+        const { name, price, description, image, category, sizes, gender, discount, tags } = req.body;
+
         const updateData = {
             name,
             price,
@@ -66,7 +65,6 @@ const updateProduct = async (req, res) => {
             image,
             category,
             sizes: Array.isArray(sizes) ? sizes : [],
-            colors: Array.isArray(colors) ? colors : [],
             gender,
             discount,
             tags: Array.isArray(tags) ? tags : []

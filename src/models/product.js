@@ -33,16 +33,6 @@ const productSchema = new mongoose.Schema({
             default: 0
         }
     }],
-    colors: [{
-        color: {
-            type: String,
-            required: true
-        },
-        colorCode: {
-            type: String,
-            required: true
-        }
-    }],
     gender: {
         type: String,
         enum: ['nam', 'nu', 'unisex'],
@@ -61,14 +51,10 @@ const productSchema = new mongoose.Schema({
 });
 
 // Middleware để xử lý mảng rỗng
-productSchema.pre('save', function(next) {
+productSchema.pre('save', function (next) {
     // Nếu sizes là mảng rỗng, không lưu vào database
     if (this.sizes && this.sizes.length === 0) {
         this.sizes = undefined;
-    }
-    // Nếu colors là mảng rỗng, không lưu vào database
-    if (this.colors && this.colors.length === 0) {
-        this.colors = undefined;
     }
     // Nếu tags là mảng rỗng, không lưu vào database
     if (this.tags && this.tags.length === 0) {
