@@ -1,4 +1,4 @@
-const { getAllProductsService, getProductService, createProductService, updateProductService, deleteProductService, searchProductService } = require("../services/productService");
+const { getAllProductsService, getProductService, createProductService, updateProductService, deleteProductService, searchProductService, getProductsByCategoryService } = require("../services/productService");
 
 const getAllProducts = async (req, res) => {
     try {
@@ -107,11 +107,25 @@ const searchProducts = async (req, res) => {
 };
 
 
+const getProductsByCategory = async (req, res) => {
+    try {
+        const categoryId = req.params.categoryId;
+        const products = await getProductsByCategoryService(categoryId);
+        return res.status(200).json(products);
+    } catch (error) {
+        return res.status(500).json({ message: 'Error fetching products by category', error: error.message });
+    }
+};
+
+
+
+
 module.exports = {
     getAllProducts,
     getProduct,
     createProduct,
     updateProduct,
     deleteProduct,
-    searchProducts
+    searchProducts,
+    getProductsByCategory
 };

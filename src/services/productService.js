@@ -56,6 +56,15 @@ const searchProductService = async (name) => {
     }
 };
 
+const getProductsByCategoryService = async (categoryId) => {
+    try {
+        return await Product.find({ category: categoryId }).populate('category').sort({ createdAt: -1 });
+    } catch (error) {
+        console.log("Error getting products by category:", error);
+        return [];
+    }
+};
+
 
 module.exports = {
     getAllProductsService,
@@ -63,5 +72,6 @@ module.exports = {
     createProductService,
     updateProductService,
     deleteProductService,
-    searchProductService
+    searchProductService,
+    getProductsByCategoryService
 }
