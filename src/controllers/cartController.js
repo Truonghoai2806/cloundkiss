@@ -46,19 +46,20 @@ const updateCartItem = async (req, res) => {
         const { quantity } = req.body;
         
         if (!quantity) {
-            return res.status(400).json({ message: 'Thiếu số lượng' });
+            return res.status(400).json({ success: false, message: 'Thiếu số lượng' }); // Thêm success: false
         }
 
         const result = await updateCartItemService(req.user.id, itemId, quantity);
         if (!result.success) {
-            return res.status(400).json({ message: result.message });
+            return res.status(400).json({ success: false, message: result.message }); // Đảm bảo success: false
         }
-        return res.status(200).json(result.cart);
+        return res.status(200).json({ success: true, cart: result.cart }); // Thêm success: true
     } catch (error) {
         console.error('Error in updateCartItem:', error);
-        return res.status(500).json({ message: 'Lỗi khi cập nhật giỏ hàng', error: error.message });
+        return res.status(500).json({ success: false, message: 'Lỗi khi cập nhật giỏ hàng', error: error.message });
     }
 }
+
 
 const removeFromCart = async (req, res) => {
     try {
