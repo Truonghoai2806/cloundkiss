@@ -45,11 +45,23 @@ const deleteProductService = async (id) => {
         return null;
     }
 }
+const searchProductService = async (name) => {
+    try {
+        return await Product.find({
+            name: { $regex: name, $options: 'i' }
+        }).populate('category').sort({ createdAt: -1 });
+    } catch (error) {
+        console.log("Error searching products:", error);
+        return [];
+    }
+};
+
 
 module.exports = {
     getAllProductsService,
     getProductService,
     createProductService,
     updateProductService,
-    deleteProductService
+    deleteProductService,
+    searchProductService
 }

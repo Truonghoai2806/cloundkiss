@@ -1,4 +1,4 @@
-const { getAllProductsService, getProductService, createProductService, updateProductService, deleteProductService } = require("../services/productService");
+const { getAllProductsService, getProductService, createProductService, updateProductService, deleteProductService, searchProductService } = require("../services/productService");
 
 const getAllProducts = async (req, res) => {
     try {
@@ -91,11 +91,27 @@ const deleteProduct = async (req, res) => {
         return res.status(500).json({ message: 'Error deleting product', error: error.message });
     }
 };
+const searchProducts = async (req, res) => {
+    try {
+        const { name } = req.query;
+
+        if (!name) {
+            return res.status(400).json({ message: 'Missing search keyword' });
+        }
+
+        const products = await searchProductService(name);
+        return res.status(200).json(products);
+    } catch (error) {
+        return res.status(500).json({ message: 'Error searching products', error: error.message });
+    }
+};
+
 
 module.exports = {
     getAllProducts,
     getProduct,
     createProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    searchProducts
 };

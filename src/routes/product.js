@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllProducts, getProduct, createProduct, updateProduct, deleteProduct } = require('../controllers/productController');
+const { getAllProducts, getProduct, createProduct, updateProduct, deleteProduct, searchProducts } = require('../controllers/productController');
 // const auth = require('../middleware/auth');
 
 const routerProduct = express.Router();
@@ -8,10 +8,12 @@ const routerProduct = express.Router();
 // routerProduct.all("*", auth);
 
 // Route cho product
+routerProduct.get('/search', searchProducts);
 routerProduct.get('/', getAllProducts);
 routerProduct.get('/:id', getProduct);
 routerProduct.post('/', createProduct);
 routerProduct.put('/:id', updateProduct);
 routerProduct.delete('/:id', deleteProduct);
+
 
 module.exports = routerProduct;
