@@ -14,7 +14,7 @@ const port = process.env.PORT || 8080;
 
 // Cấu hình CORS trước tất cả các middleware khác
 app.use(cors({
-    origin: "http://localhost:3000",
+    origin: process.env.CLIENT_URL,
     methods: "GET,POST,PUT,DELETE",
     allowedHeaders: "Content-Type, Authorization",
     credentials: true // Cho phép gửi cookie
