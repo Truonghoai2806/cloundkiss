@@ -8,15 +8,18 @@ const productSchema = new mongoose.Schema({
     },
     price: {
         type: Number,
-        required: true
+        required: true,
+        min: 0
     },
     description: {
         type: String,
+        required: true,
         trim: true
     },
     image: {
         type: String,
-        default: null
+        required: true,
+        trim: true
     },
     category: {
         type: mongoose.Schema.Types.ObjectId,
@@ -24,33 +27,32 @@ const productSchema = new mongoose.Schema({
         required: true
     },
     sizes: [{
-        size: {
-            type: String,
-            required: true
-        },
+        size: String,
         quantity: {
             type: Number,
-            default: 0
+            min: 0
         }
     }],
     gender: {
         type: String,
-        enum: ['nam', 'nu', 'unisex'],
+        enum: ['male', 'female', 'unisex'],
         default: 'unisex'
     },
     discount: {
         type: Number,
+        min: 0,
+        max: 100,
         default: 0
     },
     tags: [{
         type: String,
-        enum: ['featured', 'new']
+        trim: true
     }]
 }, {
     timestamps: true
 });
 
-// Middleware để xử lý mảng rỗng
+// Middleware để xử lý mảng rỗng và tính tổng số lượng
 productSchema.pre('save', function (next) {
     // Nếu sizes là mảng rỗng, không lưu vào database
     if (this.sizes && this.sizes.length === 0) {
@@ -63,6 +65,7 @@ productSchema.pre('save', function (next) {
     next();
 });
 
-const Product = mongoose.model('Product', productSchema);
+// Kiểm tra xem model đã tồn tại chưa trước khi tạo
+const Product = mongoose.models.Product || mongoose.model('Product', productSchema);
 
 module.exports = Product;

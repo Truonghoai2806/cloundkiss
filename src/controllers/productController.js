@@ -1,36 +1,33 @@
 const { getAllProductsService, getProductService, createProductService, updateProductService, deleteProductService, searchProductService, getProductsByCategoryService } = require("../services/productService");
+const productValidation = require('../middleware/validators/productValidator');
 
-const getAllProducts = async (req, res) => {
+const getAllProducts = async (req, res, next) => {
     try {
         const products = await getAllProductsService();
         if (!products) {
-            return res.status(500).json({ message: 'Error getting products' });
+            throw new Error('Error getting products');
         }
-        return res.status(200).json(products);
+        res.status(200).json(products);
     } catch (error) {
-        return res.status(500).json({ message: 'Error getting products', error: error.message });
+        next(error);
     }
 };
 
-const getProduct = async (req, res) => {
+const getProduct = async (req, res, next) => {
     try {
         const product = await getProductService(req.params.id);
         if (!product) {
-            return res.status(404).json({ message: 'Product not found' });
+            throw new Error('Product not found');
         }
-        return res.status(200).json(product);
+        res.status(200).json(product);
     } catch (error) {
-        return res.status(500).json({ message: 'Error getting product', error: error.message });
+        next(error);
     }
 };
 
-const createProduct = async (req, res) => {
+const createProduct = async (req, res, next) => {
     try {
         const { name, price, description, image, category, sizes, gender, discount, tags } = req.body;
-
-        if (!name || !price || !category) {
-            return res.status(400).json({ message: 'Missing required fields' });
-        }
 
         const productData = {
             name,
@@ -46,15 +43,16 @@ const createProduct = async (req, res) => {
 
         const product = await createProductService(productData);
         if (!product) {
-            return res.status(500).json({ message: 'Error creating product' });
+            throw new Error('Error creating product');
         }
-        return res.status(201).json(product);
+        
+        res.status(201).json(product);
     } catch (error) {
-        return res.status(500).json({ message: 'Error creating product', error: error.message });
+        next(error);
     }
 };
 
-const updateProduct = async (req, res) => {
+const updateProduct = async (req, res, next) => {
     try {
         const { name, price, description, image, category, sizes, gender, discount, tags } = req.body;
 
@@ -72,60 +70,51 @@ const updateProduct = async (req, res) => {
 
         const product = await updateProductService(req.params.id, updateData);
         if (!product) {
-            return res.status(404).json({ message: 'Product not found' });
+            throw new Error('Product not found');
         }
-        return res.status(200).json(product);
+        
+        res.status(200).json(product);
     } catch (error) {
-        return res.status(500).json({ message: 'Error updating product', error: error.message });
+        next(error);
     }
 };
 
-const deleteProduct = async (req, res) => {
+const deleteProduct = async (req, res, next) => {
     try {
         const product = await deleteProductService(req.params.id);
         if (!product) {
-            return res.status(404).json({ message: 'Product not found' });
+            throw new Error('Product not found');
         }
-        return res.status(200).json({ message: 'Product deleted successfully' });
+        res.status(200).json({ message: 'Product deleted successfully' });
     } catch (error) {
-        return res.status(500).json({ message: 'Error deleting product', error: error.message });
+        next(error);
     }
 };
-const searchProducts = async (req, res) => {
+
+const searchProducts = async (req, res, next) => {
     try {
-        const { name } = req.query;
-
-        if (!name) {
-            return res.status(400).json({ message: 'Missing search keyword' });
-        }
-
-        const products = await searchProductService(name);
-        return res.status(200).json(products);
+        const products = await searchProductService(req.query.name);
+        res.status(200).json(products);
     } catch (error) {
-        return res.status(500).json({ message: 'Error searching products', error: error.message });
+        next(error);
     }
 };
 
-
-const getProductsByCategory = async (req, res) => {
+const getProductsByCategory = async (req, res, next) => {
     try {
-        const categoryId = req.params.categoryId;
-        const products = await getProductsByCategoryService(categoryId);
-        return res.status(200).json(products);
+        const products = await getProductsByCategoryService(req.params.categoryId);
+        res.status(200).json(products);
     } catch (error) {
-        return res.status(500).json({ message: 'Error fetching products by category', error: error.message });
+        next(error);
     }
 };
-
-
-
 
 module.exports = {
-    getAllProducts,
-    getProduct,
-    createProduct,
-    updateProduct,
-    deleteProduct,
-    searchProducts,
-    getProductsByCategory
+    getAllProducts: [productValidation.validate, getAllProducts],
+    getProduct: [productValidation.getById, productValidation.validate, getProduct],
+    createProduct: [productValidation.create, productValidation.validate, createProduct],
+    updateProduct: [productValidation.update, productValidation.validate, updateProduct],
+    deleteProduct: [productValidation.getById, productValidation.validate, deleteProduct],
+    searchProducts: [productValidation.search, productValidation.validate, searchProducts],
+    getProductsByCategory: [productValidation.getByCategory, productValidation.validate, getProductsByCategory]
 };

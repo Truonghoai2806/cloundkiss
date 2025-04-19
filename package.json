@@ -20,13 +20,20 @@
   "dependencies": {
     "backend-hoavan": "file:",
     "bcrypt": "^5.1.1",
+    "compression": "^1.8.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "ejs": "3.1.10",
     "express": "4.19.2",
+    "express-rate-limit": "^7.5.0",
+    "express-validator": "^7.2.1",
     "google-auth-library": "^9.15.1",
+    "helmet": "^8.1.0",
+    "ioredis": "^5.6.1",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "8.4.4"
+    "mongoose": "8.4.4",
+    "vnpay": "^2.2.0",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "nodemon": "3.1.4"

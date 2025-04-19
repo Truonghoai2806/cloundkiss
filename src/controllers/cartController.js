@@ -1,79 +1,59 @@
-const { 
-    getCartService, 
-    addToCartService, 
-    updateCartItemService, 
-    removeFromCartService 
-} = require('../services/cartService');
-
+const { getCartService, addToCartService, updateCartItemService, removeFromCartService } = require('../services/cartService');
 const getCart = async (req, res) => {
     try {
-        console.log('User in getCart:', req.user);
         const cart = await getCartService(req.user.id);
         if (!cart) {
-            return res.status(404).json({ message: 'Giỏ hàng không tồn tại' });
+            return res.status(404).json({ message: 'Cart not found' });
         }
         return res.status(200).json(cart);
     } catch (error) {
-        console.error('Error in getCart:', error);
-        return res.status(500).json({ message: 'Lỗi khi lấy giỏ hàng', error: error.message });
+        return res.status(500).json({ message: error.message });
     }
 }
 
 const addToCart = async (req, res) => {
     try {
-        console.log('User in addToCart:', req.user);
-        const { productId, size, quantity = 1 } = req.body;
-        
-        if (!productId || !size) {
-            return res.status(400).json({ message: 'Thiếu thông tin bắt buộc' });
-        }
+        const { productId, size, quantity } = req.body;
+        const userId = req.user.id;
 
-        const result = await addToCartService(req.user.id, productId, size, quantity);
-        if (!result.success) {
-            return res.status(400).json({ message: result.message });
-        }
-        return res.status(200).json(result.cart);
+        const cart = await addToCartService(userId, productId, size, quantity);
+        return res.status(200).json({
+            message: 'Added to cart successfully',
+            cart
+        });
     } catch (error) {
-        console.error('Error in addToCart:', error);
-        return res.status(500).json({ message: 'Lỗi khi thêm vào giỏ hàng', error: error.message });
+        return res.status(400).json({ message: error.message });
     }
 }
 
 const updateCartItem = async (req, res) => {
     try {
-        console.log('User in updateCartItem:', req.user);
-        const { itemId } = req.params;
         const { quantity } = req.body;
-        
-        if (!quantity) {
-            return res.status(400).json({ success: false, message: 'Thiếu số lượng' }); // Thêm success: false
-        }
+        const { itemId } = req.params;
+        const userId = req.user.id;
 
-        const result = await updateCartItemService(req.user.id, itemId, quantity);
-        if (!result.success) {
-            return res.status(400).json({ success: false, message: result.message }); // Đảm bảo success: false
-        }
-        return res.status(200).json({ success: true, cart: result.cart }); // Thêm success: true
+        const cart = await updateCartItemService(userId, itemId, quantity);
+        return res.status(200).json({
+            message: 'Cart updated successfully',
+            cart
+        });
     } catch (error) {
-        console.error('Error in updateCartItem:', error);
-        return res.status(500).json({ success: false, message: 'Lỗi khi cập nhật giỏ hàng', error: error.message });
+        return res.status(400).json({ message: error.message });
     }
 }
 
-
 const removeFromCart = async (req, res) => {
     try {
-        console.log('User in removeFromCart:', req.user);
         const { itemId } = req.params;
-        
-        const result = await removeFromCartService(req.user.id, itemId);
-        if (!result.success) {
-            return res.status(400).json({ message: result.message });
-        }
-        return res.status(200).json(result.cart);
+        const userId = req.user.id;
+
+        const cart = await removeFromCartService(userId, itemId);
+        return res.status(200).json({
+            message: 'Item removed successfully',
+            cart
+        });
     } catch (error) {
-        console.error('Error in removeFromCart:', error);
-        return res.status(500).json({ message: 'Lỗi khi xóa sản phẩm khỏi giỏ hàng', error: error.message });
+        return res.status(400).json({ message: error.message });
     }
 }
 
@@ -82,4 +62,4 @@ module.exports = {
     addToCart,
     updateCartItem,
     removeFromCart
-} 
+}; 
